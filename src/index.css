@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/* Other custom CSS below */
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/src/assets/fonts/Quicksand-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.logo-spin {
+  animation: logo-spin infinite 90s linear;
+}
