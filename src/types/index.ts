@@ -40,3 +40,7 @@ export interface Order {
   paidAt?: number;
   preparationTime?: number;
 }
+
+export type OrdersByDate = {
+  [date: string]: Order[]
+}
