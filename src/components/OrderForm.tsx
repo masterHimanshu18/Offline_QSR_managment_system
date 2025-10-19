@@ -34,7 +34,7 @@ export const OrderForm: React.FC = () => {
 
   const generateWhatsAppMessage = () => {
     let message = '=============================\n'
-    message += '       FAT BREAD\n'
+    message += '          FAT BREAD\n'
     message += '=============================\n\n'
     message += 'ORDER CONFIRMATION\n\n'
     message += '-----------------------------\n'
@@ -42,8 +42,22 @@ export const OrderForm: React.FC = () => {
     message += '-----------------------------\n'
     
     currentOrder.forEach(item => {
-      message += `${item.menuItem.name} x${item.quantity}\n`
-      message += `  Price: Rs.${item.menuItem.price * item.quantity}\n`
+      // Display size info for half/full items
+      const sizeText = item.size ? ` (${item.size.toUpperCase()})` : ''
+      message += `${item.menuItem.name}${sizeText} x${item.quantity}\n`
+      
+      // Calculate correct price based on size
+      let itemPrice = 0
+      if (item.size === 'half' && item.menuItem.halfPrice !== undefined) {
+        itemPrice = item.menuItem.halfPrice
+      } else if (item.size === 'full' && item.menuItem.fullPrice !== undefined) {
+        itemPrice = item.menuItem.fullPrice
+      } else {
+        itemPrice = item.menuItem.price || 0
+      }
+      
+      message += `  Price: Rs.${itemPrice * item.quantity}\n`
+      
       if (item.addOns.length > 0) {
         message += `  Add-ons:\n`
         item.addOns.forEach(a => {
@@ -77,19 +91,33 @@ export const OrderForm: React.FC = () => {
       </h3>
 
       <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
-        {currentOrder.map((item, index) => (
-          <div key={index} className="border-b pb-2">
-            <div className="flex justify-between font-medium">
-              <span>{item.menuItem.name} x{item.quantity}</span>
-              <span>₹{item.menuItem.price * item.quantity}</span>
-            </div>
-            {item.addOns.length > 0 && (
-              <div className="text-sm text-gray-600 ml-2">
-                + {item.addOns.map(a => `${a.addOn.name} x${a.count} (₹${a.addOn.price * a.count})`).join(', ')}
+        {currentOrder.map((item, index) => {
+          // Calculate correct display price
+          let displayPrice = 0
+          if (item.size === 'half' && item.menuItem.halfPrice !== undefined) {
+            displayPrice = item.menuItem.halfPrice
+          } else if (item.size === 'full' && item.menuItem.fullPrice !== undefined) {
+            displayPrice = item.menuItem.fullPrice
+          } else {
+            displayPrice = item.menuItem.price || 0
+          }
+
+          const sizeText = item.size ? ` (${item.size.toUpperCase()})` : ''
+
+          return (
+            <div key={index} className="border-b pb-2">
+              <div className="flex justify-between font-medium">
+                <span>{item.menuItem.name}{sizeText} x{item.quantity}</span>
+                <span>₹{displayPrice * item.quantity}</span>
               </div>
-            )}
-          </div>
-        ))}
+              {item.addOns.length > 0 && (
+                <div className="text-sm text-gray-600 ml-2">
+                  + {item.addOns.map(a => `${a.addOn.name} x${a.count} (₹${a.addOn.price * a.count})`).join(', ')}
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
 
       <div className="border-t pt-4 mb-4">

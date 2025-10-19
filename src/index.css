@@ -1,9 +1,7 @@
 @import "tailwindcss";
 
-/* Other custom CSS below */
-* {
-  box-sizing: border-box;
-}
+/* custom CSS */
+* { box-sizing: border-box; }
 
 @font-face {
   font-family: 'Quicksand';
@@ -13,17 +11,21 @@
   font-display: swap;
 }
 
-
 body {
   font-family: 'Quicksand', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Logo spin keyframes */
 @keyframes logo-spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
+
+/* Default spin class */
 .logo-spin {
-  animation: logo-spin infinite 90s linear;
+  animation: logo-spin infinite linear;
+  animation-duration: 70s;
+  transition: animation-duration cubic-bezier(0.19, 1, 0.22, 1) cubic-bezier(0.52, 0.01, 0.27, 1.01);
 }

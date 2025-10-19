@@ -37,9 +37,20 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   const calculateTotal = (items: OrderItem[]): number => {
     return items.reduce((total, item) => {
-      const itemTotal = item.menuItem.price * item.quantity
+      // Calculate base price based on size (for half/full items) or regular price
+      let itemPrice = 0
+      if (item.size === 'half' && item.menuItem.halfPrice !== undefined) {
+        itemPrice = item.menuItem.halfPrice
+      } else if (item.size === 'full' && item.menuItem.fullPrice !== undefined) {
+        itemPrice = item.menuItem.fullPrice
+      } else {
+        itemPrice = item.menuItem.price || 0
+      }
+
+      const itemTotal = itemPrice * item.quantity
       const addOnsTotal = item.addOns.reduce((sum, addOn: AddOnCount) =>
         sum + (addOn.addOn.price * addOn.count), 0)
+      
       return total + itemTotal + addOnsTotal
     }, 0)
   }

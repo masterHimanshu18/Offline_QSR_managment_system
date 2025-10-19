@@ -29,7 +29,7 @@ export const Reports: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold flex items-center gap-2 text-white">
-          <BarChart3/>
+          <BarChart3 />
           Reports
         </h2>
       </div>
@@ -53,22 +53,22 @@ export const Reports: React.FC = () => {
         </div>
       </div>
 
-        <div className="flex gap-2">
-            <button
-            onClick={() => exportOrdersAsJSON()}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-lg flex items-center gap-2 transition"
-            >
-            <Download size={18} />
-            Export JSON
-            </button>
-            <button
-            onClick={() => exportOrdersAsCSV()}
-            className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded-lg flex items-center gap-2 transition"
-            >
-            <Download size={18} />
-            Export CSV
-            </button>
-        </div>
+      <div className="flex gap-2">
+        <button
+          onClick={() => exportOrdersAsJSON()}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded-lg flex items-center gap-2 transition"
+        >
+          <Download size={18} />
+          Export JSON
+        </button>
+        <button
+          onClick={() => exportOrdersAsCSV()}
+          className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded-lg flex items-center gap-2 transition"
+        >
+          <Download size={18} />
+          Export CSV
+        </button>
+      </div>
 
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex items-center gap-4 mb-4">
@@ -107,7 +107,7 @@ export const Reports: React.FC = () => {
               <tr>
                 <th className="px-4 py-2 text-left">Order ID</th>
                 <th className="px-4 py-2 text-left">Phone/Name</th>
-                <th className="px-4 py-2 text-left">Order_Items Detail</th>
+                <th className="px-4 py-2 text-left">Items (Size) & Add-ons</th>
                 <th className="px-4 py-2 text-left">Prep Time</th>
                 <th className="px-4 py-2 text-left">Total</th>
                 <th className="px-4 py-2 text-left">Status</th>
@@ -119,22 +119,24 @@ export const Reports: React.FC = () => {
                   <td className="px-4 py-2 font-bold">#{order.id}</td>
                   <td className="px-4 py-2">{order.phone}</td>
                   <td className="px-4 py-2 text-sm">
-                    {order.items.map(item => {
-                      let itemStr = `${item.menuItem.name} x${item.quantity}`
-                      if (item.addOns.length > 0) {
-                        itemStr += ` (+ ${item.addOns.map(a => `${a.addOn.name} x${a.count}`).join(', ')})`
-                      }
-                      return itemStr
-                    }).join(' | ')}
+                    {order.items
+                      .map(item => {
+                        const sizeLabel = item.size ? ` (${item.size})` : ''
+                        const addOnText = item.addOns.length
+                          ? ` +${item.addOns.map(a => `${a.addOn.name}×${a.count}`).join(', ')}`
+                          : ''
+                        return `${item.menuItem.name}${sizeLabel}×${item.quantity}${addOnText}`
+                      })
+                      .join(' | ')}
                   </td>
-                  <td className="px-4 py-2 font-mono text-sm">{formatPrepTime(order.preparationTime)}</td>
+                  <td className="px-4 py-2 font-mono text-sm">
+                    {formatPrepTime(order.preparationTime)}
+                  </td>
                   <td className="px-4 py-2 font-bold text-green-600">₹{order.total}</td>
                   <td className="px-4 py-2">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        order.paid
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-red-100 text-red-700'
+                        order.paid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                       }`}
                     >
                       {order.paid ? 'Paid' : 'Unpaid'}
