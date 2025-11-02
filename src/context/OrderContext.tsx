@@ -7,6 +7,7 @@ interface OrderContextType {
   orders: Order[]
   addOrder: (phone: string, items: OrderItem[]) => void
   updateOrderStatus: (orderId: number, status: Order['status'], unpaidReason?: string, preparationTime?: number) => void
+  markOrderItemServed: (orderId: number, itemIdx: number, served: boolean) => void // <-- NEW
   currentOrder: OrderItem[]
   setCurrentOrder: React.Dispatch<React.SetStateAction<OrderItem[]>>
   calculateTotal: (items: OrderItem[]) => number
@@ -20,24 +21,19 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   // Load orders on mount
   useEffect(() => {
-    console.log('🔄 Loading orders from localStorage...')
     const todayOrders = getTodayOrders()
-    console.log('✅ Loaded orders:', todayOrders)
     setOrders(todayOrders)
   }, [])
 
   // Save orders whenever they change
   useEffect(() => {
     if (orders.length > 0) {
-      console.log('💾 Saving orders to localStorage:', orders)
       saveTodayOrders(orders)
-      console.log('✅ Orders saved successfully')
     }
   }, [orders])
 
   const calculateTotal = (items: OrderItem[]): number => {
     return items.reduce((total, item) => {
-      // Calculate base price based on size (for half/full items) or regular price
       let itemPrice = 0
       if (item.size === 'half' && item.menuItem.halfPrice !== undefined) {
         itemPrice = item.menuItem.halfPrice
@@ -46,52 +42,63 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       } else {
         itemPrice = item.menuItem.price || 0
       }
-
       const itemTotal = itemPrice * item.quantity
       const addOnsTotal = item.addOns.reduce((sum, addOn: AddOnCount) =>
         sum + (addOn.addOn.price * addOn.count), 0)
-      
       return total + itemTotal + addOnsTotal
     }, 0)
   }
 
   const addOrder = (phone: string, items: OrderItem[]) => {
+    // Initialize items' served to false if not provided
+    const newItems = items.map(i => ({
+      ...i,
+      served: i.served ?? false
+    }))
     const newOrder: Order = {
       id: getNextOrderId(),
       phone,
-      items,
+      items: newItems,
       status: 'preparing',
       paid: false,
-      total: calculateTotal(items),
+      total: calculateTotal(newItems),
       createdAt: Date.now()
     }
-    console.log('➕ Adding new order:', newOrder)
     setOrders(prev => [...prev, newOrder])
     setCurrentOrder([])
   }
 
+  // NEW: Mark a single order item's served state as true/false and persist
+  const markOrderItemServed = (orderId: number, itemIdx: number, served: boolean) => {
+    setOrders(prev =>
+      prev.map(order => {
+        if (order.id !== orderId) return order
+        const updatedItems = order.items.map((item, idx) =>
+          idx === itemIdx ? { ...item, served } : item
+        )
+        return { ...order, items: updatedItems }
+      })
+    )
+  }
+  // End NEW
+
   const updateOrderStatus = (orderId: number, status: Order['status'], unpaidReason?: string, preparationTime?: number) => {
-    console.log(`🔄 Updating order ${orderId} to status: ${status}`)
     setOrders(prev => prev.map(order => {
       if (order.id === orderId) {
         const updated: Order = { ...order, status }
-        
         if (status === 'served') {
           updated.servedAt = Date.now()
           if (preparationTime !== undefined) {
             updated.preparationTime = preparationTime
           }
         }
-        
         if (status === 'paid') {
           updated.paid = true
           updated.paidAt = Date.now()
         }
-        
         if (status === 'unpaid' && unpaidReason) {
           updated.unpaidReason = unpaidReason
         }
-        
         return updated
       }
       return order
@@ -103,6 +110,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       orders,
       addOrder,
       updateOrderStatus,
+      markOrderItemServed, // <-- NEW
       currentOrder,
       setCurrentOrder,
       calculateTotal

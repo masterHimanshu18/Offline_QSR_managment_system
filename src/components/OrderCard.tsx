@@ -8,20 +8,18 @@ interface OrderCardProps {
 }
 
 export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
-  const { updateOrderStatus } = useOrders()
+  const { updateOrderStatus, markOrderItemServed } = useOrders()
   const [timer, setTimer] = useState(0)
   const [showUnpaidModal, setShowUnpaidModal] = useState(false)
   const [unpaidReason, setUnpaidReason] = useState('')
 
   useEffect(() => {
-    // Only run timer if order is still preparing
     if (order.status !== 'preparing') {
       if (order.preparationTime) {
         setTimer(order.preparationTime)
       }
       return
     }
-
     const interval = setInterval(() => {
       setTimer(Math.floor((Date.now() - order.createdAt) / 1000))
     }, 1000)
@@ -34,10 +32,19 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
+  // --- NEW: "canMarkServed" based on context-persisted state
+  const canMarkServed = order.items.every(i => i.served)
+
   const handleMarkServed = () => {
-    // Save preparation time when marking served
+    if (!canMarkServed) return
     updateOrderStatus(order.id, 'served', undefined, timer)
   }
+
+  // --- NEW: update served state in context (persisted) ---
+  const handleCheckboxChange = (idx: number) => {
+    markOrderItemServed(order.id, idx, !order.items[idx].served)
+  }
+  // -------------------------------------------------------
 
   const handleUnpaid = () => {
     if (!unpaidReason.trim()) {
@@ -76,7 +83,16 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
         <div className="mb-3 space-y-1">
           {order.items.map((item, idx) => (
-            <div key={idx} className="text-sm">
+            <div key={idx} className="flex items-center gap-2 text-sm">
+              {/* Only show checkbox when status is "preparing" */}
+              {order.status === 'preparing' && (
+                <input
+                  type="checkbox"
+                  checked={item.served}
+                  onChange={() => handleCheckboxChange(idx)}
+                  className="h-4 w-4 accent-green-600"
+                />
+              )}
               <span className="font-medium">{item.menuItem.name} x{item.quantity}</span>
               {item.addOns.length > 0 && (
                 <span className="text-gray-600 text-xs ml-2">
@@ -98,7 +114,12 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           {order.status === 'preparing' && (
             <button
               onClick={handleMarkServed}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition"
+              disabled={!canMarkServed}
+              className={`flex-1 py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition ${
+                canMarkServed
+                  ? 'bg-blue-500 hover:bg-blue-600 text-white'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               <Check size={18} />
               Mark Served

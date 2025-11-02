@@ -24,6 +24,7 @@ export interface OrderItem {
   menuItem: MenuItem;
   quantity: number;
   size?: 'half' | 'full'; // For sandwiches with half/full pricing
+  served: boolean;
   addOns: AddOnCount[];
 }
 

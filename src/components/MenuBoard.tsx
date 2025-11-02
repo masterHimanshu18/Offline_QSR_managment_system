@@ -17,7 +17,7 @@ export const MenuBoard: React.FC = () => {
     )
   }
 
-  // Update quantity for specific size
+  // --- UPDATED: Always include served property in new items ---
   const updateQuantity = (menuItem: MenuItem, delta: number, size?: 'half' | 'full') => {
     setCurrentOrder(prev => {
       const existing = prev.find(
@@ -38,11 +38,13 @@ export const MenuBoard: React.FC = () => {
           return item
         })
       } else if (delta > 0) {
-        return [...prev, { menuItem, quantity: 1, size, addOns: [] }]
+        // FIX: Served ALWAYS included, addOns array always present
+        return [...prev, { menuItem, quantity: 1, size, addOns: [], served: false }]
       }
       return prev
     })
   }
+  // ------------------------------------------------------------
 
   // Add-on Counter Handler (per item + size)
   const updateAddOnCount = (menuItem: MenuItem, addOn: AddOn, newCount: number, size?: 'half' | 'full') => {
@@ -91,10 +93,8 @@ export const MenuBoard: React.FC = () => {
               {menuItems
                 .filter(item => item.category === category)
                 .map(item => {
-                  // Check if this item has half/full pricing
                   const hasHalfFull = item.halfPrice !== undefined && item.fullPrice !== undefined
                   
-                  // For items with half/full, we need to track both separately
                   const halfOrderItem = hasHalfFull ? findOrderItem(item, 'half') : null
                   const fullOrderItem = hasHalfFull ? findOrderItem(item, 'full') : null
                   const regularOrderItem = !hasHalfFull ? findOrderItem(item) : null
@@ -119,8 +119,6 @@ export const MenuBoard: React.FC = () => {
                             <p className="text-green-600 font-bold">₹{item.price}</p>
                           )}
                         </div>
-                        
-                        {/* For regular items (not half/full) */}
                         {!hasHalfFull && (
                           <div className="flex items-center gap-2 bg-yellow-400 rounded-full px-2 py-1">
                             <button
@@ -141,10 +139,8 @@ export const MenuBoard: React.FC = () => {
                         )}
                       </div>
 
-                      {/* For half/full items, show separate counters */}
                       {hasHalfFull && (
                         <div className="space-y-2 mb-2">
-                          {/* Half Size Counter */}
                           <div className="flex items-center justify-between bg-blue-50 rounded-lg p-2">
                             <span className="text-sm font-medium">Half</span>
                             <div className="flex items-center gap-2 bg-yellow-400 rounded-full px-2 py-1">
@@ -165,7 +161,6 @@ export const MenuBoard: React.FC = () => {
                             </div>
                           </div>
 
-                          {/* Full Size Counter */}
                           <div className="flex items-center justify-between bg-green-50 rounded-lg p-2">
                             <span className="text-sm font-medium">Full</span>
                             <div className="flex items-center gap-2 bg-yellow-400 rounded-full px-2 py-1">
@@ -188,7 +183,6 @@ export const MenuBoard: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Add-ons section for Half size */}
                       {hasHalfFull && halfQty > 0 && (
                         <div className="mt-3 pt-3 border-t">
                           <p className="text-sm font-medium text-gray-700 mb-2">Half Add-ons:</p>
@@ -215,7 +209,6 @@ export const MenuBoard: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Add-ons section for Full size */}
                       {hasHalfFull && fullQty > 0 && (
                         <div className="mt-3 pt-3 border-t">
                           <p className="text-sm font-medium text-gray-700 mb-2">Full Add-ons:</p>
@@ -242,7 +235,6 @@ export const MenuBoard: React.FC = () => {
                         </div>
                       )}
 
-                      {/* Add-ons section for regular items */}
                       {!hasHalfFull && regularQty > 0 && (
                         <div className="mt-3 pt-3 border-t">
                           <p className="text-sm font-medium text-gray-700 mb-2">Add-ons:</p>

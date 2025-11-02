@@ -28,6 +28,7 @@ export const menuItems: MenuItem[] = [
   // 2. BURGERS
   { id: 'b1', name: 'Veggie Licious Burger',      category: 'Burgers', price: 69,  isVeg: true },
   { id: 'b2', name: 'Chicken Goddamn Burger',     category: 'Burgers', price: 109, isVeg: false },
+  { id: 'b3', name: 'Vada Pav',                   category: 'Burgers', price: 50, isVeg: true },
 
   // 3. RUSH HOURS (Fries)
   { id: 'rh1', name: 'Peri Peri Fries',            category: 'Rush Hours', price: 69,  isVeg: true },
@@ -39,11 +40,17 @@ export const menuItems: MenuItem[] = [
   { id: 'w1', name: 'Paneer Tikka Wrap',           category: 'Wraps', price: 109, isVeg: true },
   { id: 'w2', name: 'Sikhi Kebab Wrap',            category: 'Wraps', price: 139, isVeg: false },
   { id: 'w3', name: 'Chicken Loaded Wrap',         category: 'Wraps', price: 139, isVeg: false },
+  { id: 'w4', name: 'Paneer Aachari Wrap',         category: 'Wraps', price: 119, isVeg: true },
+  { id: 'w5', name: 'Chicken Breast Wrap',         category: 'Wraps', price: 149, isVeg: false },
 
-  // 5. COLD COFFEE
-  { id: 'cc1', name: 'Cold Love Coffee',            category: 'Cold Coffee', price: 69,  isVeg: true },
-  { id: 'cc2', name: 'Simping Hazelnut Coffee',     category: 'Cold Coffee', price: 89,  isVeg: true },
-  { id: 'cc3', name: 'Green Flag Caramel Coffee',   category: 'Cold Coffee', price: 99,  isVeg: true },
+  // 5. COFFEE
+  { id: 'cc1', name: 'Cold Love Coffee',            category: 'Coffee', price: 69,  isVeg: true },
+  { id: 'cc2', name: 'Simping Hazelnut Coffee',     category: 'Coffee', price: 89,  isVeg: true },
+  { id: 'cc3', name: 'Green Flag Caramel Coffee',   category: 'Coffee', price: 99,  isVeg: true },
+  { id: 'cc4', name: 'Hot Coffee',   category: 'Coffee', price: 69,  isVeg: true },
+  { id: 'cc5', name: 'Hot Chocolate',   category: 'Coffee', price: 99,  isVeg: true },
+
+
 
   // 6. ICED COFFEE
   { id: 'ic1', name: 'Iced Americano',              category: 'Iced Coffee', price: 79,  isVeg: true },
@@ -53,14 +60,23 @@ export const menuItems: MenuItem[] = [
   { id: 'ic5', name: 'Iced Caramel Macchiato',      category: 'Iced Coffee', price: 109, isVeg: true },
 
   // 7. MOCKTAILS
-  { id: 'm1',  name: 'Lime Soda',                   category: 'Mocktails', price: 59,  isVeg: true },
+  { id: 'm1',  name: 'Lime Soda',                  category: 'Mocktails', price: 59,  isVeg: true },
   { id: 'm2',  name: 'Blue Lagoon',                category: 'Mocktails', price: 69,  isVeg: true },
   { id: 'm3',  name: 'Mint Mojito',                category: 'Mocktails', price: 79,  isVeg: true },
   { id: 'm4',  name: 'Green Apple',                category: 'Mocktails', price: 79,  isVeg: true },
+  { id: 'm5',  name: 'Pina Colada',                category: 'Mocktails', price: 99,  isVeg: true },
+  { id: 'm6',  name: 'Sassy Mango',                category: 'Mocktails', price: 89,  isVeg: true },
+  { id: 'm7',  name: 'Sassy Lemonade',             category: 'Mocktails', price: 89,  isVeg: true },
+  { id: 'm8',  name: 'Chilli Guava',               category: 'Mocktails', price: 89,  isVeg: true },
+  { id: 'm9',  name: 'Blue Berry Cheese Cake Shake', category: 'Mocktails', price: 129,  isVeg: true },
 
   // 8. ICE TEA
   { id: 'it1', name: 'Peach Ice Tea',               category: 'Ice Tea', price: 69,  isVeg: true },
   { id: 'it2', name: 'Lemon Ice Tea',               category: 'Ice Tea', price: 69,  isVeg: true },
+
+  // 9. SALAD
+  { id: 's1', name: 'Paneer Salad',               category: 'Salad', price: 129,  isVeg: true },
+  { id: 's2', name: 'Chicken Salad',              category: 'Salad', price: 149,  isVeg: false },
 ]
 
 export const addOns: AddOn[] = [
